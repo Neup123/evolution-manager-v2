@@ -400,7 +400,8 @@
         "description": "Enable or disable the webhook"
       },
       "url": {
-        "label": "URL"
+        "label": "URL",
+        "n8nTestWarning": "This is an n8n test URL. It receives events only while Listen for test event is active. Copy the Production URL containing /webhook/ before saving this webhook."
       },
       "byEvents": {
         "label": "Webhook by Events",

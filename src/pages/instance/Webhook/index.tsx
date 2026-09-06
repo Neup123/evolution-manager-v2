@@ -125,6 +125,7 @@ function Webhook() {
                 {!isGo && <FormInput name={`webhooks.${index}.name`} label={t("webhook.form.name.label")}><Input placeholder="Community join requests" /></FormInput>}
                 {!isGo && <FormSwitch name={`webhooks.${index}.enabled`} label={t("webhook.form.enabled.label")} className="w-full justify-between" helper={t("webhook.form.enabled.description")} />}
                 <FormInput name={`webhooks.${index}.url`} label={t("webhook.form.url.label")}><Input placeholder="https://automation.example/webhook/whatsapp" /></FormInput>
+                {value?.url.includes("/webhook-test/") && <div className="rounded-md border border-amber-500/40 bg-amber-500/10 p-3 text-xs">{t("webhook.form.url.n8nTestWarning")}</div>}
                 {!isGo && <FormSwitch name={`webhooks.${index}.byEvents`} label={t("webhook.form.byEvents.label")} className="w-full justify-between" helper={t("webhook.form.byEvents.description")} />}
                 {!isGo && value?.byEvents && <div className="rounded-md border border-amber-500/40 bg-amber-500/10 p-3 text-xs"><p>{t("webhook.form.byEvents.n8nWarning")}</p><p className="mt-2 break-all font-mono">{eventUrl}</p></div>}
                 {!isGo && <FormSwitch name={`webhooks.${index}.base64`} label={t("webhook.form.base64.label")} className="w-full justify-between" helper={t("webhook.form.base64.description")} />}
