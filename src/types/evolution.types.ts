@@ -334,6 +334,7 @@ export type TypebotSettings = {
 
 export type Webhook = {
   id?: string;
+  name?: string;
   enabled: boolean;
   url: string;
   events: string[];

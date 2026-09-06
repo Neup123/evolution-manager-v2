@@ -4,7 +4,7 @@ import { api } from "../api";
 import { useFetchWebhookGo } from "../go/webhook/fetchWebhook";
 import { getProvider } from "../token";
 import { UseQueryParams } from "../types";
-import { FetchWebhookResponse } from "./types";
+import { FetchWebhookResponse, FetchWebhooksResponse } from "./types";
 
 interface IParams {
   instanceName: string | null;
@@ -15,6 +15,13 @@ const queryKey = (params: Partial<IParams>) => ["webhook", "fetchWebhook", JSON.
 
 export const fetchWebhook = async ({ instanceName, token }: IParams) => {
   const response = await api.get(`/webhook/find/${instanceName}`, {
+    headers: { apiKey: token },
+  });
+  return response.data;
+};
+
+export const fetchWebhooks = async ({ instanceName, token }: IParams) => {
+  const response = await api.get(`/webhook/find-all/${instanceName}`, {
     headers: { apiKey: token },
   });
   return response.data;
@@ -36,4 +43,14 @@ export const useFetchWebhook = (props: UseQueryParams<FetchWebhookResponse> & Pa
   const goQuery = useFetchWebhookGo({ ...props, enabled: (props.enabled ?? true) && provider === "go" });
 
   return provider === "go" ? goQuery : apiQuery;
+};
+
+export const useFetchWebhooks = (props: UseQueryParams<FetchWebhooksResponse> & Partial<IParams>) => {
+  const { instanceName, token, enabled, ...rest } = props;
+  return useQuery<FetchWebhooksResponse>({
+    ...rest,
+    queryKey: ["webhook", "fetchWebhooks", JSON.stringify({ instanceName, token })],
+    queryFn: () => fetchWebhooks({ instanceName: instanceName!, token: token! }),
+    enabled: !!instanceName && (enabled ?? true) && getProvider() === "api",
+  });
 };

@@ -22,16 +22,16 @@ function Footer() {
       url: "https://evolution-api.com/discord",
     },
     {
-      name: "Postman",
-      url: "https://evolution-api.com/postman",
+      name: "Swagger",
+      url: `${url?.replace(/\/$/, "") ?? ""}/docs`,
     },
     {
       name: "GitHub",
-      url: "https://github.com/EvolutionAPI/evolution-api",
+      url: "https://github.com/Neup123/evolution-api",
     },
     {
       name: "Docs",
-      url: "https://docs.evolutionfoundation.com.br/",
+      url: "https://github.com/Neup123/evolution-api/tree/main/docs",
     },
   ];
 

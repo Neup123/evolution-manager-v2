@@ -13,8 +13,17 @@ interface IParams {
   data: Webhook;
 }
 
+interface IManyParams extends Omit<IParams, "data"> {
+  data: Webhook[];
+}
+
 const createWebhook = async ({ instanceName, token, data }: IParams) => {
   const response = await api.post(`/webhook/set/${instanceName}`, { webhook: data }, { headers: { apikey: token } });
+  return response.data;
+};
+
+const saveWebhooks = async ({ instanceName, token, data }: IManyParams) => {
+  const response = await api.post(`/webhook/set-many/${instanceName}`, { webhooks: data }, { headers: { apikey: token } });
   return response.data;
 };
 
@@ -24,10 +33,14 @@ export function useManageWebhook() {
   const go = provider === "go" ? buildGoWebhookMutations(qc) : null;
 
   const createWebhookMutation = useManageMutation(go ? go.createWebhook : createWebhook, {
-    invalidateKeys: [["webhook", "fetchWebhook"]],
+    invalidateKeys: [["webhook", "fetchWebhook"], ["webhook", "fetchWebhooks"]],
+  });
+  const saveWebhooksMutation = useManageMutation(saveWebhooks, {
+    invalidateKeys: [["webhook", "fetchWebhook"], ["webhook", "fetchWebhooks"]],
   });
 
   return {
     createWebhook: createWebhookMutation,
+    saveWebhooks: saveWebhooksMutation,
   };
 }

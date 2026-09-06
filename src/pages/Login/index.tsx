@@ -209,8 +209,8 @@ function Login() {
         <div className="text-center text-xs text-muted-foreground">
           <p>
             © {new Date().getFullYear()} Evolution API ·{" "}
-            <a href="https://docs.evolutionfoundation.com.br/" target="_blank" rel="noreferrer" className="underline hover:text-primary">
-              Documentação
+            <a href="https://github.com/Neup123/evolution-api/tree/main/docs" target="_blank" rel="noreferrer" className="underline hover:text-primary">
+              Documentation
             </a>
           </p>
         </div>

@@ -17,6 +17,7 @@ import { useTheme } from "@/components/theme-provider";
 import { useInstance } from "@/contexts/InstanceContext";
 
 import { FEATURES, FeatureKey, isFeatureEnabled } from "@/lib/provider/features";
+import { getToken, TOKEN_ID } from "@/lib/queries/token";
 import { cn } from "@/lib/utils";
 
 const GATED_IDS = new Set<string>(Object.keys(FEATURES));
@@ -107,10 +108,11 @@ function NavItem({ to, icon: Icon, label, isExternal }: { to: string; icon?: typ
 
 function ExternalLinks() {
   const { t } = useTranslation();
+  const apiUrl = getToken(TOKEN_ID.API_URL)?.replace(/\/$/, "") ?? "";
   return (
     <>
-      <NavItem to="https://docs.evolutionfoundation.com.br/" icon={FileQuestion} label={t("sidebar.documentation")} isExternal />
-      <NavItem to="https://evolution-api.com/postman" icon={CircleHelp} label={t("sidebar.postman")} isExternal />
+      <NavItem to="https://github.com/Neup123/evolution-api/tree/main/docs" icon={FileQuestion} label={t("sidebar.documentation")} isExternal />
+      <NavItem to={`${apiUrl}/docs`} icon={CircleHelp} label="Swagger" isExternal />
       <NavItem to="https://evolution-api.com/discord" icon={MessageCircle} label={t("sidebar.discord")} isExternal />
     </>
   );

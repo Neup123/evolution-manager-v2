@@ -218,7 +218,7 @@
     "evolutionBot": "Evolution Bot",
     "flowise": "Flowise",
     "documentation": "Documentation",
-    "postman": "Postman",
+    "postman": "Swagger",
     "discord": "Discord"
   },
   "toast": {
@@ -385,12 +385,16 @@
     }
   },
   "webhook": {
-    "title": "Webhook",
+    "title": "Webhook destinations",
+    "description": "Send each WhatsApp event to one or more independent destinations.",
     "toast": {
       "success": "Webhook applied successfully",
       "error": "An error occurred while applying the webhook"
     },
     "form": {
+      "name": {
+        "label": "Webhook name"
+      },
       "enabled": {
         "label": "Enabled",
         "description": "Enable or disable the webhook"
@@ -400,7 +404,8 @@
       },
       "byEvents": {
         "label": "Webhook by Events",
-        "description": "Create a route for each event by adding the event name to the end of the URL"
+        "description": "Send each event to a URL formed by adding the event name to the end of the base URL",
+        "n8nWarning": "n8n Webhook nodes match an exact path and do not catch added subpaths. Create an exact n8n webhook path for each event, or turn off Webhook by Events to send every selected event to the URL above. Example delivery URL:"
       },
       "base64": {
         "label": "Webhook Base64",
@@ -412,7 +417,14 @@
     },
     "button": {
       "save": "Save",
-      "saving": "Saving..."
+      "saving": "Saving...",
+      "add": "Add webhook",
+      "remove": "Remove webhook"
+    },
+    "status": {
+      "enabled": "Enabled",
+      "disabled": "Disabled",
+      "events": "events"
     }
   },
   "websocket": {
