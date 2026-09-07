@@ -26,6 +26,10 @@ function Footer() {
       url: `${url?.replace(/\/$/, "") ?? ""}/docs`,
     },
     {
+      name: "Webhook Events",
+      url: `${url?.replace(/\/$/, "") ?? ""}/webhooks/docs`,
+    },
+    {
       name: "GitHub",
       url: "https://github.com/Neup123/evolution-api",
     },

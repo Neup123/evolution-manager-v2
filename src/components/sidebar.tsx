@@ -7,6 +7,7 @@ import {
   IterationCcw,
   LayoutDashboard,
   MessageCircle,
+  RadioTower,
   Zap,
 } from "lucide-react";
 import { useMemo } from "react";
@@ -113,6 +114,7 @@ function ExternalLinks() {
     <>
       <NavItem to="https://github.com/Neup123/evolution-api/tree/main/docs" icon={FileQuestion} label={t("sidebar.documentation")} isExternal />
       <NavItem to={`${apiUrl}/docs`} icon={CircleHelp} label="Swagger" isExternal />
+      <NavItem to={`${apiUrl}/webhooks/docs`} icon={RadioTower} label="Webhook Events" isExternal />
       <NavItem to="https://evolution-api.com/discord" icon={MessageCircle} label={t("sidebar.discord")} isExternal />
     </>
   );
