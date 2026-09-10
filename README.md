@@ -76,9 +76,13 @@ Evolution Manager v2 is a modern, responsive web interface built with React and 
 
 ### ⚙️ **Configuration Management**
 - Instance settings and behavior
+- Per-instance local database snapshot TTL and method overrides
+- WhatsApp archive capture categories, media retention, group/contact overrides, status, and preview-confirm purge
 - Proxy configuration
 - Authentication management
 - Environment variables
+
+Archive administration requires a global-admin login and the separate Evolution API `ARCHIVE_API_KEY`. The manager keeps that archive key only in page memory and never writes it to browser storage.
 
 ### 🎨 **User Experience**
 - Dark/Light theme support
