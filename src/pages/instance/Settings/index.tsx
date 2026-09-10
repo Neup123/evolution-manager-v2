@@ -10,6 +10,8 @@ import { Form, FormInput, FormSwitch } from "@/components/ui/form";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { Separator } from "@evoapi/design-system/separator";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import { ArchiveSettings } from "./ArchiveSettings";
 
 import { useInstance } from "@/contexts/InstanceContext";
 
@@ -26,6 +28,15 @@ const FormSchema = z.object({
   readMessages: z.boolean(),
   syncFullHistory: z.boolean(),
   readStatus: z.boolean(),
+  localReadTtlSeconds: z.coerce.number().int().min(0).max(2592000),
+  localReadTtlOverrides: z.string().refine((value) => {
+    try {
+      const parsed = value.trim() ? JSON.parse(value) : {};
+      return parsed && typeof parsed === "object" && !Array.isArray(parsed) && Object.values(parsed).every((ttl) => Number.isInteger(ttl) && Number(ttl) >= 0);
+    } catch {
+      return false;
+    }
+  }, "Enter a JSON object whose values are non-negative seconds"),
 });
 
 function Settings() {
@@ -49,6 +60,8 @@ function Settings() {
       readMessages: false,
       syncFullHistory: false,
       readStatus: false,
+      localReadTtlSeconds: 300,
+      localReadTtlOverrides: "{}",
     },
   });
 
@@ -62,6 +75,8 @@ function Settings() {
         readMessages: settings.readMessages,
         syncFullHistory: settings.syncFullHistory,
         readStatus: settings.readStatus,
+        localReadTtlSeconds: settings.localReadTtlSeconds ?? 300,
+        localReadTtlOverrides: JSON.stringify(settings.localReadTtlOverrides ?? {}, null, 2),
       });
     }
   }, [form, settings]);
@@ -81,6 +96,8 @@ function Settings() {
         readMessages: data.readMessages,
         syncFullHistory: data.syncFullHistory,
         readStatus: data.readStatus,
+        localReadTtlSeconds: data.localReadTtlSeconds,
+        localReadTtlOverrides: JSON.parse(data.localReadTtlOverrides || "{}"),
       };
       await updateSettings({
         instanceName: instance.name,
@@ -153,6 +170,18 @@ function Settings() {
                   <FormSwitch name={field.name} label={field.label} className="w-full justify-between" helper={field.description} />
                 </div>
               ))}
+              <div className="space-y-4 p-4">
+                <div>
+                  <h4 className="font-medium">Local data cache</h4>
+                  <p className="text-sm text-muted-foreground">Set how long this instance may reuse PostgreSQL snapshots before checking WhatsApp. Empty results automatically retry live.</p>
+                </div>
+                <FormInput name="localReadTtlSeconds" label="Default TTL (seconds)">
+                  <Input type="number" min={0} max={2592000} />
+                </FormInput>
+                <FormInput name="localReadTtlOverrides" label="Method TTL overrides (JSON)">
+                  <Textarea rows={5} placeholder={'{"groupMetadata": 3600, "fetchStatus": 60}'} />
+                </FormInput>
+              </div>
               <div className="flex justify-end pt-6">
                 <Button type="submit" disabled={updating}>
                   {updating ? t("settings.button.saving") : t("settings.button.save")}
@@ -162,6 +191,7 @@ function Settings() {
           </div>
         </form>
       </Form>
+      {instance?.name && <ArchiveSettings instanceName={instance.name} />}
     </>
   );
 }

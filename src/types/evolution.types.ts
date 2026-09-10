@@ -7,6 +7,8 @@ export type Settings = {
   readMessages: boolean;
   readStatus: boolean;
   syncFullHistory: boolean;
+  localReadTtlSeconds?: number | null;
+  localReadTtlOverrides?: Record<string, number> | null;
   createdAt?: string;
   updatedAt?: string;
   instanceId?: string;
