@@ -1,3 +1,29 @@
+export type AutomationSafetySettings = {
+  enabled: boolean;
+  typing: {
+    enabled: boolean;
+    minMs: number;
+    maxMs: number;
+    charactersPerSecond: number;
+    jitterPercent: number;
+    presence: "composing" | "recording";
+    applyToMediaCaptions: boolean;
+  };
+  rateLimit: {
+    instancePerMinute: number;
+    instancePerDay: number;
+    recipientPerMinute: number;
+    recipientPerDay: number;
+    minimumIntervalMs: number;
+    maxConcurrentSends: number;
+  };
+  quietHours: { enabled: boolean; start: string; end: string; timeZone: string };
+  duplicate: { enabled: boolean; windowSeconds: number };
+  suppression: { recipients: string[]; allowlistEnabled: boolean; allowedRecipients: string[] };
+  failurePause: { enabled: boolean; threshold: number; pauseSeconds: number };
+  audit: { retentionDays: number };
+};
+
 export type Settings = {
   id?: string;
   rejectCall: boolean;
@@ -9,6 +35,7 @@ export type Settings = {
   syncFullHistory: boolean;
   localReadTtlSeconds?: number | null;
   localReadTtlOverrides?: Record<string, number> | null;
+  automationSafety?: AutomationSafetySettings | null;
   createdAt?: string;
   updatedAt?: string;
   instanceId?: string;

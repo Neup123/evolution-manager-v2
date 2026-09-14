@@ -18,6 +18,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated package.json with proper metadata and repository information
 - Improved project structure for open source development
 
+## [2.2.0] - 2026-09-14
+
+### Added
+- Complete per-instance Automation Safety & Pacing controls under Instance Settings.
+- Controls for bounded typing indicators, rolling minute/daily rate limits, concurrency, quiet hours, recipient suppression and opt-in allowlisting, duplicate blocking, failure pauses, and audit retention.
+
+### Changed
+- Outbound policy explanations explicitly state that message content is never rewritten and quiet-hour requests are rejected rather than silently queued.
+
 ## [2.0.0] - develop
 
 ### Added
