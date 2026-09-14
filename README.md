@@ -85,7 +85,9 @@ Evolution Manager v2 is a modern, responsive web interface built with React and 
 
 Archive administration requires a global-admin login and the separate Evolution API `ARCHIVE_API_KEY`. The manager keeps that archive key only in page memory and never writes it to browser storage.
 
-Outbound safeguards are available at **Instance → Settings → Automation safety & pacing**. They apply to normal API, n8n, and chatbot sends without rewriting message content. Quiet-hour and limit violations are returned to the caller rather than silently queued. Evolution API 4.2 or later is required for these controls.
+Outbound safeguards are available at **Instance → Settings → Automation safety & pacing**. They apply to normal API, n8n, and chatbot sends without rewriting message content. The separate outreach controls count only unique new or dormant direct contacts; recent inbound contacts, groups, and broadcasts are excluded. Quiet-hour and limit violations are returned to the caller rather than silently queued. Evolution API 5.0.0 or later is required for all controls.
+
+Dashboard Refresh, Restart, and Disconnect actions disable while running and show explicit success/failure notifications. Restart waits for a real API connection transition. Webhook saves are applied by the API immediately; a container restart is not required.
 
 ### 🎨 **User Experience**
 - Dark/Light theme support

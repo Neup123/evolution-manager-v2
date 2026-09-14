@@ -17,6 +17,7 @@ export type AutomationSafetySettings = {
     minimumIntervalMs: number;
     maxConcurrentSends: number;
   };
+  outreach: { enabled: boolean; newOrDormantRecipientsPerDay: number; dormantAfterDays: number };
   quietHours: { enabled: boolean; start: string; end: string; timeZone: string };
   duplicate: { enabled: boolean; windowSeconds: number };
   suppression: { recipients: string[]; allowlistEnabled: boolean; allowedRecipients: string[] };

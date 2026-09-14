@@ -45,7 +45,8 @@ export const InstanceProvider: React.FC<InstanceProviderProps> = ({ children }):
       value={{
         instance: instance ?? null,
         reloadInstance: async () => {
-          await reloadInstance();
+          const result = await reloadInstance();
+          if (result.error) throw result.error;
         },
       }}>
       {children}

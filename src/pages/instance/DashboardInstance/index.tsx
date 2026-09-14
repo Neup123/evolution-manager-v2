@@ -8,6 +8,7 @@ import { CircleUser, LogOut, MessageCircle, Power, QrCode, RefreshCw, Send, User
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import QRCode from "react-qr-code";
+import { toast } from "react-toastify";
 
 import { BaseHeader } from "@/components/base-header";
 import { InstanceStatus } from "@/components/instance-status";
@@ -30,6 +31,7 @@ function DashboardInstance() {
   const [pairingCode, setPairingCode] = useState("");
   const [goQrOpen, setGoQrOpen] = useState(false);
   const [goSendOpen, setGoSendOpen] = useState(false);
+  const [activeAction, setActiveAction] = useState<"refresh" | "restart" | "disconnect" | null>(null);
   const token = getToken(TOKEN_ID.TOKEN);
   const isGo = getProvider() === "go";
   const { theme } = useTheme();
@@ -46,24 +48,42 @@ function DashboardInstance() {
   }, [instance]);
 
   const handleReload = async () => {
-    await reloadInstance();
+    try {
+      setActiveAction("refresh");
+      await reloadInstance();
+      toast.success("Instance status refreshed");
+    } catch (error) {
+      toast.error("Could not refresh the instance status");
+    } finally {
+      setActiveAction(null);
+    }
   };
 
   const handleRestart = async (instanceName: string) => {
     try {
+      setActiveAction("restart");
       await restart(instanceName);
       await reloadInstance();
+      toast.success("Instance restart completed");
     } catch (error) {
       console.error("Error:", error);
+      toast.error("Instance restart failed");
+    } finally {
+      setActiveAction(null);
     }
   };
 
   const handleLogout = async (instanceName: string) => {
     try {
+      setActiveAction("disconnect");
       await logout(instanceName);
       await reloadInstance();
+      toast.success("Instance disconnected");
     } catch (error) {
       console.error("Error:", error);
+      toast.error("Could not disconnect the instance");
+    } finally {
+      setActiveAction(null);
     }
   };
 
@@ -109,32 +129,35 @@ function DashboardInstance() {
     <div className="flex flex-col">
       <BaseHeader
         title={instance.name}
-        subtitle={instance.profileName || t("instance.dashboard.subtitle", { defaultValue: "Gerencie sua instância" })}
+        subtitle={instance.profileName || t("instance.dashboard.subtitle", { defaultValue: "Manage your instance" })}
         secondaryActions={[
           {
-            label: t("button.refresh", { defaultValue: "Atualizar" }),
-            icon: <RefreshCw className="h-4 w-4" />,
+            label: activeAction === "refresh" ? "Refreshing…" : t("button.refresh", { defaultValue: "Refresh" }),
+            icon: <RefreshCw className={`h-4 w-4 ${activeAction === "refresh" ? "animate-spin" : ""}`} />,
             onClick: handleReload,
+            disabled: activeAction !== null,
           },
           {
-            label: t("instance.dashboard.button.restart", { defaultValue: "Reiniciar" }),
+            label: activeAction === "restart" ? "Restarting…" : t("instance.dashboard.button.restart", { defaultValue: "Restart" }),
             icon: <Power className="h-4 w-4" />,
             onClick: () => handleRestart(instance.name),
+            disabled: activeAction !== null,
           },
           ...(connected
             ? [
                 {
-                  label: t("instance.dashboard.button.disconnect", { defaultValue: "Desconectar" }),
+                  label: activeAction === "disconnect" ? "Disconnecting…" : t("instance.dashboard.button.disconnect", { defaultValue: "Disconnect" }),
                   icon: <LogOut className="h-4 w-4" />,
                   onClick: () => handleLogout(instance.name),
                   variant: "destructive" as const,
+                  disabled: activeAction !== null,
                 },
               ]
             : []),
           ...(isGo && connected
             ? [
                 {
-                  label: t("instance.dashboard.button.sendMessage", { defaultValue: "Enviar mensagem" }),
+                  label: t("instance.dashboard.button.sendMessage", { defaultValue: "Send message" }),
                   icon: <Send className="h-4 w-4" />,
                   onClick: () => setGoSendOpen(true),
                   variant: "default" as const,

@@ -51,6 +51,9 @@ const FormSchema = z.object({
   recipientPerDay: z.coerce.number().int().min(1).max(100000),
   minimumIntervalMs: z.coerce.number().int().min(0).max(600000),
   maxConcurrentSends: z.coerce.number().int().min(1).max(100),
+  outreachEnabled: z.boolean(),
+  newOrDormantRecipientsPerDay: z.coerce.number().int().min(1).max(100000),
+  dormantAfterDays: z.coerce.number().int().min(1).max(3650),
   quietHoursEnabled: z.boolean(),
   quietHoursStart: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/),
   quietHoursEnd: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/),
@@ -106,6 +109,9 @@ function Settings() {
       recipientPerDay: 250,
       minimumIntervalMs: 750,
       maxConcurrentSends: 4,
+      outreachEnabled: true,
+      newOrDormantRecipientsPerDay: 50,
+      dormantAfterDays: 180,
       quietHoursEnabled: false,
       quietHoursStart: "22:00",
       quietHoursEnd: "08:00",
@@ -148,6 +154,9 @@ function Settings() {
         recipientPerDay: settings.automationSafety?.rateLimit?.recipientPerDay ?? 250,
         minimumIntervalMs: settings.automationSafety?.rateLimit?.minimumIntervalMs ?? 750,
         maxConcurrentSends: settings.automationSafety?.rateLimit?.maxConcurrentSends ?? 4,
+        outreachEnabled: settings.automationSafety?.outreach?.enabled ?? true,
+        newOrDormantRecipientsPerDay: settings.automationSafety?.outreach?.newOrDormantRecipientsPerDay ?? 50,
+        dormantAfterDays: settings.automationSafety?.outreach?.dormantAfterDays ?? 180,
         quietHoursEnabled: settings.automationSafety?.quietHours?.enabled ?? false,
         quietHoursStart: settings.automationSafety?.quietHours?.start ?? "22:00",
         quietHoursEnd: settings.automationSafety?.quietHours?.end ?? "08:00",
@@ -200,6 +209,11 @@ function Settings() {
             recipientPerDay: data.recipientPerDay,
             minimumIntervalMs: data.minimumIntervalMs,
             maxConcurrentSends: data.maxConcurrentSends,
+          },
+          outreach: {
+            enabled: data.outreachEnabled,
+            newOrDormantRecipientsPerDay: data.newOrDormantRecipientsPerDay,
+            dormantAfterDays: data.dormantAfterDays,
           },
           quietHours: {
             enabled: data.quietHoursEnabled,
@@ -335,6 +349,18 @@ function Settings() {
                     <FormInput name="recipientPerDay" label="Recipient sends / day"><Input type="number" min={1} /></FormInput>
                     <FormInput name="minimumIntervalMs" label="Recipient minimum interval (ms)"><Input type="number" min={0} /></FormInput>
                     <FormInput name="maxConcurrentSends" label="Maximum concurrent sends"><Input type="number" min={1} max={100} /></FormInput>
+                  </div>
+                </div>
+
+                <div className="rounded-md border p-4 space-y-4">
+                  <div>
+                    <h5 className="font-medium">New and dormant recipient outreach</h5>
+                    <p className="text-sm text-muted-foreground">Counts unique direct contacts only. Recent inbound contacts, including anyone who messaged first, do not consume this quota. Groups and broadcasts are excluded.</p>
+                  </div>
+                  <FormSwitch name="outreachEnabled" label="Limit new or dormant recipients" helper="A dormant contact is one with no inbound message inside the configured relationship window." />
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <FormInput name="newOrDormantRecipientsPerDay" label="Unique recipients / rolling 24 hours"><Input type="number" min={1} max={100000} /></FormInput>
+                    <FormInput name="dormantAfterDays" label="Dormant after days without inbound contact"><Input type="number" min={1} max={3650} /></FormInput>
                   </div>
                 </div>
 
