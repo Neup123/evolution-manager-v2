@@ -78,11 +78,14 @@ Evolution Manager v2 is a modern, responsive web interface built with React and 
 - Instance settings and behavior
 - Per-instance local database snapshot TTL and method overrides
 - WhatsApp archive capture categories, media retention, group/contact overrides, status, and preview-confirm purge
+- Per-instance automation safety and pacing controls: bounded typing indicators, rate and concurrency limits, quiet hours, suppression and recipient allowlisting, duplicate protection, failure pauses, and audit retention
 - Proxy configuration
 - Authentication management
 - Environment variables
 
 Archive administration requires a global-admin login and the separate Evolution API `ARCHIVE_API_KEY`. The manager keeps that archive key only in page memory and never writes it to browser storage.
+
+Outbound safeguards are available at **Instance → Settings → Automation safety & pacing**. They apply to normal API, n8n, and chatbot sends without rewriting message content. Quiet-hour and limit violations are returned to the caller rather than silently queued. Evolution API 4.2 or later is required for these controls.
 
 ### 🎨 **User Experience**
 - Dark/Light theme support
