@@ -12,6 +12,7 @@ export type HeaderAction = {
   onClick: () => void;
   variant?: "default" | "outline" | "ghost" | "destructive" | "secondary" | "link";
   className?: string;
+  disabled?: boolean;
 };
 
 interface BaseHeaderProps {
@@ -49,7 +50,7 @@ export function BaseHeader({
 
         {primaryAction && (
           <div className="flex-shrink-0">
-            <Button onClick={primaryAction.onClick} variant={primaryAction.variant || "default"} className={primaryAction.className}>
+            <Button disabled={primaryAction.disabled} onClick={primaryAction.onClick} variant={primaryAction.variant || "default"} className={primaryAction.className}>
               {primaryAction.icon && <span className="mr-2 inline-flex">{primaryAction.icon}</span>}
               {primaryAction.label}
             </Button>
@@ -75,7 +76,7 @@ export function BaseHeader({
           {secondaryActions.length > 0 && (
             <div className="flex items-center gap-2">
               {secondaryActions.map((action, i) => (
-                <Button key={i} variant={action.variant || "outline"} size="sm" onClick={action.onClick} className={action.className}>
+                <Button disabled={action.disabled} key={i} variant={action.variant || "outline"} size="sm" onClick={action.onClick} className={action.className}>
                   {action.icon && <span className="mr-2 inline-flex">{action.icon}</span>}
                   {action.label}
                 </Button>

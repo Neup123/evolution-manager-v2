@@ -18,6 +18,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated package.json with proper metadata and repository information
 - Improved project structure for open source development
 
+## [2.2.1] - 2026-09-14
+
+### Added
+- Controls for the unique new/dormant-recipient quota and relationship inactivity window.
+- Visible loading, success, and failure feedback for Refresh, Restart, and Disconnect.
+
+### Changed
+- Replaced Portuguese fallback action labels with English.
+- Documented immediate webhook application and relationship-aware outreach behavior.
+
 ## [2.2.0] - 2026-09-14
 
 ### Added
