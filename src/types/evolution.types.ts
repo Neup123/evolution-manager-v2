@@ -19,7 +19,7 @@ export type AutomationSafetySettings = {
   };
   outreach: { enabled: boolean; newOrDormantRecipientsPerDay: number; dormantAfterDays: number };
   quietHours: { enabled: boolean; start: string; end: string; timeZone: string };
-  duplicate: { enabled: boolean; windowSeconds: number };
+  duplicate: { enabled: boolean; windowSeconds: number; similarityThresholdPercent: number };
   suppression: { recipients: string[]; allowlistEnabled: boolean; allowedRecipients: string[] };
   failurePause: { enabled: boolean; threshold: number; pauseSeconds: number };
   audit: { retentionDays: number };

@@ -60,6 +60,7 @@ const FormSchema = z.object({
   quietHoursTimeZone: z.string().min(1).max(100),
   duplicateEnabled: z.boolean(),
   duplicateWindowSeconds: z.coerce.number().int().min(1).max(86400),
+  duplicateSimilarityThresholdPercent: z.coerce.number().int().min(1).max(100),
   suppressedRecipients: z.string(),
   allowlistEnabled: z.boolean(),
   allowedRecipients: z.string(),
@@ -118,6 +119,7 @@ function Settings() {
       quietHoursTimeZone: "UTC",
       duplicateEnabled: true,
       duplicateWindowSeconds: 30,
+      duplicateSimilarityThresholdPercent: 100,
       suppressedRecipients: "",
       allowlistEnabled: false,
       allowedRecipients: "",
@@ -163,6 +165,7 @@ function Settings() {
         quietHoursTimeZone: settings.automationSafety?.quietHours?.timeZone ?? "UTC",
         duplicateEnabled: settings.automationSafety?.duplicate?.enabled ?? true,
         duplicateWindowSeconds: settings.automationSafety?.duplicate?.windowSeconds ?? 30,
+        duplicateSimilarityThresholdPercent: settings.automationSafety?.duplicate?.similarityThresholdPercent ?? 100,
         suppressedRecipients: (settings.automationSafety?.suppression?.recipients ?? []).join("\n"),
         allowlistEnabled: settings.automationSafety?.suppression?.allowlistEnabled ?? false,
         allowedRecipients: (settings.automationSafety?.suppression?.allowedRecipients ?? []).join("\n"),
@@ -221,7 +224,11 @@ function Settings() {
             end: data.quietHoursEnd,
             timeZone: data.quietHoursTimeZone,
           },
-          duplicate: { enabled: data.duplicateEnabled, windowSeconds: data.duplicateWindowSeconds },
+          duplicate: {
+            enabled: data.duplicateEnabled,
+            windowSeconds: data.duplicateWindowSeconds,
+            similarityThresholdPercent: data.duplicateSimilarityThresholdPercent,
+          },
           suppression: {
             recipients: data.suppressedRecipients.split(/[\n,]/).map((value) => value.trim()).filter(Boolean),
             allowlistEnabled: data.allowlistEnabled,
@@ -383,14 +390,16 @@ function Settings() {
 
                 <div className="rounded-md border p-4 space-y-4">
                   <h5 className="font-medium">Duplicate and failure protection</h5>
-                  <FormSwitch name="duplicateEnabled" label="Block exact duplicate text" helper="Links, identifiers, and all other content remain unchanged; only the exact message fingerprint is compared." />
+                  <FormSwitch name="duplicateEnabled" label="Block duplicate or similar text" helper="Compares text and media captions without changing their contents." />
                   <FormSwitch name="failurePauseEnabled" label="Pause after consecutive failures" helper="Opens a temporary circuit after the configured number of failed sends." />
                   <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                     <FormInput name="duplicateWindowSeconds" label="Duplicate window (seconds)"><Input type="number" min={1} /></FormInput>
+                    <FormInput name="duplicateSimilarityThresholdPercent" label="Similarity threshold (%)"><Input type="number" min={1} max={100} /></FormInput>
                     <FormInput name="failurePauseThreshold" label="Failure threshold"><Input type="number" min={1} /></FormInput>
                     <FormInput name="failurePauseSeconds" label="Pause duration (seconds)"><Input type="number" min={1} /></FormInput>
                     <FormInput name="auditRetentionDays" label="Audit retention (days)"><Input type="number" min={1} max={3650} /></FormInput>
                   </div>
+                  <p className="text-sm text-muted-foreground">100% blocks exact text only. Lower values also block near-duplicates; 85% is a practical starting point. Every successful message to the same recipient inside the time window is checked—there is no fixed message-count limit.</p>
                 </div>
               </div>
               <div className="flex justify-end pt-6">
