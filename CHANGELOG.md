@@ -18,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated package.json with proper metadata and repository information
 - Improved project structure for open source development
 
+## [2.3.0] - 2026-09-16
+
+### Added
+- A 1–100% duplicate-similarity threshold in Instance Settings.
+- Clear UI guidance that the duplicate lookback is time-based and checks every successful message in the window, not a fixed message count.
+
 ## [2.2.1] - 2026-09-14
 
 ### Added
