@@ -7,6 +7,7 @@ import { InstanceLayout } from "@/layout/InstanceLayout";
 import { MainLayout } from "@/layout/MainLayout";
 
 import Dashboard from "@/pages/Dashboard";
+import SettingsTemplates from "@/pages/SettingsTemplates";
 import { Chat } from "@/pages/instance/Chat";
 import { Chatwoot } from "@/pages/instance/Chatwoot";
 import { DashboardInstance } from "@/pages/instance/DashboardInstance";
@@ -51,6 +52,16 @@ const router = createBrowserRouter([
       <ProtectedRoute>
         <MainLayout>
           <Dashboard />
+        </MainLayout>
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/manager/settings-templates",
+    element: (
+      <ProtectedRoute feature="settingsTemplates">
+        <MainLayout>
+          <SettingsTemplates />
         </MainLayout>
       </ProtectedRoute>
     ),
