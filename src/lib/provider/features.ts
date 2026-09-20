@@ -4,6 +4,7 @@ type ProviderSupport = Record<Provider, boolean>;
 
 export const FEATURES = {
   dashboard: { api: true, go: true },
+  settingsTemplates: { api: true, go: false },
   chat: { api: true, go: false },
   settings: { api: true, go: true },
   proxy: { api: true, go: true },
