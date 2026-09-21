@@ -18,6 +18,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated package.json with proper metadata and repository information
 - Improved project structure for open source development
 
+## [2.4.0] - 2026-09-21
+
+### Added
+- Visual creation, editing, duplication, and deletion of shared settings templates.
+- Instance, group, and contact template assignments with the documented precedence order.
+- Guided controls for local-read cache settings and outbound automation safety policies.
+
 ## [2.3.0] - 2026-09-16
 
 ### Added
