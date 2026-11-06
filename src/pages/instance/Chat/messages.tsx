@@ -151,6 +151,7 @@ const getMessageText = (messageObj: any): string => {
 
 // Component to render different message types based on messageType
 const MessageContent = ({ message }: { message: Message }) => {
+  if (!message.message) return <span>Message content unavailable</span>;
   const messageType = message.messageType as string;
 
   switch (messageType) {

@@ -16,6 +16,7 @@ interface MessageRendererProps {
 }
 
 export function MessageRenderer({ message, fromMe }: MessageRendererProps) {
+  if (!message.message) return <span>Message content unavailable</span>;
   switch (message.messageType as string) {
     case "conversation": {
       if (message.message.contactMessage) {
