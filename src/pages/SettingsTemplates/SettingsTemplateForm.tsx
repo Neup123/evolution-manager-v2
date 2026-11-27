@@ -33,7 +33,7 @@ const schema = z
     recipientPerMinute: z.coerce.number().int().min(1).max(1000),
     recipientPerDay: z.coerce.number().int().min(1).max(100000),
     minimumIntervalMs: z.coerce.number().int().min(0).max(600000),
-    maxConcurrentSends: z.coerce.number().int().min(1).max(100),
+    instanceMinimumIntervalMs: z.coerce.number().int().min(0).max(600000),
     outreachEnabled: z.boolean(),
     newOrDormantRecipientsPerDay: z.coerce.number().int().min(1).max(100000),
     dormantAfterDays: z.coerce.number().int().min(1).max(3650),
@@ -71,7 +71,7 @@ const defaults: Values = {
   recipientPerMinute: 10,
   recipientPerDay: 250,
   minimumIntervalMs: 750,
-  maxConcurrentSends: 4,
+  instanceMinimumIntervalMs: 1500,
   outreachEnabled: true,
   newOrDormantRecipientsPerDay: 50,
   dormantAfterDays: 180,
@@ -127,7 +127,7 @@ export function SettingsTemplateForm({
       recipientPerMinute: a.rateLimit?.recipientPerMinute ?? 10,
       recipientPerDay: a.rateLimit?.recipientPerDay ?? 250,
       minimumIntervalMs: a.rateLimit?.minimumIntervalMs ?? 750,
-      maxConcurrentSends: a.rateLimit?.maxConcurrentSends ?? 4,
+      instanceMinimumIntervalMs: a.rateLimit?.instanceMinimumIntervalMs ?? 1500,
       outreachEnabled: a.outreach?.enabled ?? true,
       newOrDormantRecipientsPerDay: a.outreach?.newOrDormantRecipientsPerDay ?? 50,
       dormantAfterDays: a.outreach?.dormantAfterDays ?? 180,
@@ -170,7 +170,7 @@ export function SettingsTemplateForm({
             recipientPerMinute: v.recipientPerMinute,
             recipientPerDay: v.recipientPerDay,
             minimumIntervalMs: v.minimumIntervalMs,
-            maxConcurrentSends: v.maxConcurrentSends,
+            instanceMinimumIntervalMs: v.instanceMinimumIntervalMs,
           },
           outreach: { enabled: v.outreachEnabled, newOrDormantRecipientsPerDay: v.newOrDormantRecipientsPerDay, dormantAfterDays: v.dormantAfterDays },
           quietHours: { enabled: v.quietHoursEnabled, start: v.quietHoursStart, end: v.quietHoursEnd, timeZone: v.quietHoursTimeZone },
@@ -232,7 +232,7 @@ export function SettingsTemplateForm({
               <Num name="recipientPerMinute" label="Maximum messages per minute to one recipient" helper="Counts messages to each recipient separately." />
               <Num name="recipientPerDay" label="Maximum messages per 24 hours to one recipient" helper="Counts messages to each recipient separately in a rolling 24-hour window." />
               <Num name="minimumIntervalMs" label="Minimum time between messages to the same recipient (ms)" helper="This gap applies only to repeated messages to the same recipient, not different recipients." />
-              <Num name="maxConcurrentSends" label="Maximum simultaneous sends in this instance" helper="How many outgoing sends can be in progress at once in this instance." />
+              <Num name="instanceMinimumIntervalMs" label="Minimum time between sends in this instance (ms)" helper="Minimum gap after a successful send, including sends to different recipients. Only one send can be in progress at a time." />
             </Grid>
           </Group>
           <Group title="Limits for new or inactive contacts">
