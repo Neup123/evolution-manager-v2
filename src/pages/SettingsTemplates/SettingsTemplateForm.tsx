@@ -214,7 +214,7 @@ export function SettingsTemplateForm({
               <Num name="typingMinMs" label="Shortest typing indicator (ms)" helper="The indicator stays visible for at least this long when enabled." />
               <Num name="typingMaxMs" label="Longest typing indicator (ms)" helper="The indicator never lasts longer than this setting unless an explicit longer delay is supplied." />
               <Num name="typingCharactersPerSecond" label="Typing speed (characters per second)" helper="Used with message length to calculate typing duration. Lower values mean longer waits." />
-              <Num name="typingJitterPercent" label="Typing duration variation (%)" helper="Random variation above or below the calculated duration, still limited by the shortest and longest durations. This is not the typing speed." />
+              <Num name="typingJitterPercent" label="Random variation in typing time (%)" helper="For example, 20% varies a calculated 10-second wait between 8 and 12 seconds, before applying the minimum and maximum. This changes duration, not typing speed." />
               <FormSelect
                 name="typingPresence"
                 label="Status shown to the recipient"
@@ -299,13 +299,9 @@ function Grid({ children }: { children: React.ReactNode }) {
   return <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">{children}</div>;
 }
 function Num({ name, label, helper }: { name: string; label: string; helper?: string }) {
-  const helpId = `${name}-help`;
   return (
-    <div className="space-y-1">
-      <FormInput name={name} label={label}>
-        <Input type="number" aria-describedby={helper ? helpId : undefined} />
-      </FormInput>
-      {helper && <p id={helpId} className="text-xs text-muted-foreground">{helper}</p>}
-    </div>
+    <FormInput name={name} label={label} help={helper}>
+      <Input type="number" />
+    </FormInput>
   );
 }
