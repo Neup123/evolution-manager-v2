@@ -7,6 +7,7 @@ import { Controller, ControllerProps, FieldPath, FieldValues, FormProvider, useF
 import { WithContext as ReactTags, SEPARATORS } from "react-tag-input";
 
 import { cn } from "@/lib/utils";
+import { SettingHelp } from "./tooltip";
 
 const defaultInputClassNames =
   "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50";
@@ -112,6 +113,7 @@ FormMessage.displayName = "FormMessage";
 const FormInput = <TFieldValues extends FieldValues = FieldValues, TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>>({
   name,
   label,
+  help,
   children,
   required,
   readOnly,
@@ -119,6 +121,7 @@ const FormInput = <TFieldValues extends FieldValues = FieldValues, TName extends
   ...props
 }: Omit<ControllerProps<TFieldValues, TName>, "render"> & {
   label?: string;
+  help?: string;
   children: React.ReactNode;
   className?: string;
   required?: boolean;
@@ -131,10 +134,13 @@ const FormInput = <TFieldValues extends FieldValues = FieldValues, TName extends
       render={({ field }) => (
         <FormItem className={className}>
           {label && (
-            <FormLabel>
-              {label}
-              {required && <span className="ml-2 text-rose-600">*</span>}
-            </FormLabel>
+            <div className="flex items-center gap-1">
+              <FormLabel>
+                {label}
+                {required && <span className="ml-2 text-rose-600">*</span>}
+              </FormLabel>
+              {help && <SettingHelp label={label} content={help} />}
+            </div>
           )}
           <FormControl>
             {React.isValidElement(children) &&
@@ -148,6 +154,7 @@ const FormInput = <TFieldValues extends FieldValues = FieldValues, TName extends
                 readOnly,
               })}
           </FormControl>
+          {help && <FormDescription className="sr-only">{help}</FormDescription>}
           <FormMessage />
         </FormItem>
       )}

@@ -33,7 +33,7 @@ const schema = z
     recipientPerMinute: z.coerce.number().int().min(1).max(1000),
     recipientPerDay: z.coerce.number().int().min(1).max(100000),
     minimumIntervalMs: z.coerce.number().int().min(0).max(600000),
-    maxConcurrentSends: z.coerce.number().int().min(1).max(100),
+    instanceMinimumIntervalMs: z.coerce.number().int().min(0).max(600000),
     outreachEnabled: z.boolean(),
     newOrDormantRecipientsPerDay: z.coerce.number().int().min(1).max(100000),
     dormantAfterDays: z.coerce.number().int().min(1).max(3650),
@@ -71,7 +71,7 @@ const defaults: Values = {
   recipientPerMinute: 10,
   recipientPerDay: 250,
   minimumIntervalMs: 750,
-  maxConcurrentSends: 4,
+  instanceMinimumIntervalMs: 1500,
   outreachEnabled: true,
   newOrDormantRecipientsPerDay: 50,
   dormantAfterDays: 180,
@@ -127,7 +127,7 @@ export function SettingsTemplateForm({
       recipientPerMinute: a.rateLimit?.recipientPerMinute ?? 10,
       recipientPerDay: a.rateLimit?.recipientPerDay ?? 250,
       minimumIntervalMs: a.rateLimit?.minimumIntervalMs ?? 750,
-      maxConcurrentSends: a.rateLimit?.maxConcurrentSends ?? 4,
+      instanceMinimumIntervalMs: a.rateLimit?.instanceMinimumIntervalMs ?? 1500,
       outreachEnabled: a.outreach?.enabled ?? true,
       newOrDormantRecipientsPerDay: a.outreach?.newOrDormantRecipientsPerDay ?? 50,
       dormantAfterDays: a.outreach?.dormantAfterDays ?? 180,
@@ -170,7 +170,7 @@ export function SettingsTemplateForm({
             recipientPerMinute: v.recipientPerMinute,
             recipientPerDay: v.recipientPerDay,
             minimumIntervalMs: v.minimumIntervalMs,
-            maxConcurrentSends: v.maxConcurrentSends,
+            instanceMinimumIntervalMs: v.instanceMinimumIntervalMs,
           },
           outreach: { enabled: v.outreachEnabled, newOrDormantRecipientsPerDay: v.newOrDormantRecipientsPerDay, dormantAfterDays: v.dormantAfterDays },
           quietHours: { enabled: v.quietHoursEnabled, start: v.quietHoursStart, end: v.quietHoursEnd, timeZone: v.quietHoursTimeZone },
@@ -207,39 +207,39 @@ export function SettingsTemplateForm({
             <p className="text-sm text-muted-foreground">Shared controls for automated API, n8n, and chatbot sends.</p>
           </div>
           <FormSwitch name="automationEnabled" label="Enable outbound safety policy" />
-          <Group title="Typing indicator">
-            <FormSwitch name="typingEnabled" label="Show a bounded typing indicator" />
-            <FormSwitch name="typingApplyToMediaCaptions" label="Include media captions" />
+          <Group title="Typing indicator duration">
+            <FormSwitch name="typingEnabled" label="Show typing status before sending" />
+            <FormSwitch name="typingApplyToMediaCaptions" label="Calculate typing duration for photo and video captions too" />
             <Grid>
-              <Num name="typingMinMs" label="Minimum (ms)" />
-              <Num name="typingMaxMs" label="Maximum (ms)" />
-              <Num name="typingCharactersPerSecond" label="Characters / second" />
-              <Num name="typingJitterPercent" label="Bounded jitter (%)" />
+              <Num name="typingMinMs" label="Shortest typing indicator (ms)" helper="The indicator stays visible for at least this long when enabled." />
+              <Num name="typingMaxMs" label="Longest typing indicator (ms)" helper="The indicator never lasts longer than this setting unless an explicit longer delay is supplied." />
+              <Num name="typingCharactersPerSecond" label="Typing speed (characters per second)" helper="Used with message length to calculate typing duration. Lower values mean longer waits." />
+              <Num name="typingJitterPercent" label="Random variation in typing time (%)" helper="For example, 20% varies a calculated 10-second wait between 8 and 12 seconds, before applying the minimum and maximum. This changes duration, not typing speed." />
               <FormSelect
                 name="typingPresence"
-                label="Presence"
+                label="Status shown to the recipient"
                 options={[
-                  { value: "composing", label: "Composing" },
-                  { value: "recording", label: "Recording" },
+                  { value: "composing", label: "Typing…" },
+                  { value: "recording", label: "Recording…" },
                 ]}
               />
             </Grid>
           </Group>
-          <Group title="Rate and concurrency limits">
+          <Group title="Sending limits">
             <Grid>
-              <Num name="instancePerMinute" label="Instance sends / minute" />
-              <Num name="instancePerDay" label="Instance sends / day" />
-              <Num name="recipientPerMinute" label="Recipient sends / minute" />
-              <Num name="recipientPerDay" label="Recipient sends / day" />
-              <Num name="minimumIntervalMs" label="Recipient interval (ms)" />
-              <Num name="maxConcurrentSends" label="Concurrent sends" />
+              <Num name="instancePerMinute" label="Maximum messages per minute (whole instance)" helper="Counts messages to all recipients together." />
+              <Num name="instancePerDay" label="Maximum messages per 24 hours (whole instance)" helper="Counts messages to all recipients together in a rolling 24-hour window." />
+              <Num name="recipientPerMinute" label="Maximum messages per minute to one recipient" helper="Counts messages to each recipient separately." />
+              <Num name="recipientPerDay" label="Maximum messages per 24 hours to one recipient" helper="Counts messages to each recipient separately in a rolling 24-hour window." />
+              <Num name="minimumIntervalMs" label="Minimum time between messages to the same recipient (ms)" helper="This gap applies only to repeated messages to the same recipient, not different recipients." />
+              <Num name="instanceMinimumIntervalMs" label="Minimum time between sends in this instance (ms)" helper="Minimum gap after a successful send, including sends to different recipients. Only one send can be in progress at a time." />
             </Grid>
           </Group>
-          <Group title="New and dormant recipient outreach">
-            <FormSwitch name="outreachEnabled" label="Limit new or dormant recipients" />
+          <Group title="Limits for new or inactive contacts">
+            <FormSwitch name="outreachEnabled" label="Limit messages to new or inactive contacts" />
             <Grid>
-              <Num name="newOrDormantRecipientsPerDay" label="Unique recipients / 24h" />
-              <Num name="dormantAfterDays" label="Dormant after days" />
+              <Num name="newOrDormantRecipientsPerDay" label="Maximum new or inactive recipients per 24 hours" helper="Limits distinct new or inactive direct contacts in a rolling 24-hour window." />
+              <Num name="dormantAfterDays" label="Days without an incoming message before a contact is inactive" helper="Measured from the most recent incoming message." />
             </Grid>
           </Group>
           <Group title="Quiet hours and suppression">
@@ -267,11 +267,11 @@ export function SettingsTemplateForm({
             <FormSwitch name="duplicateEnabled" label="Block duplicate or similar text" />
             <FormSwitch name="failurePauseEnabled" label="Pause after consecutive failures" />
             <Grid>
-              <Num name="duplicateWindowSeconds" label="Duplicate window (seconds)" />
-              <Num name="duplicateSimilarityThresholdPercent" label="Similarity threshold (%)" />
-              <Num name="failurePauseThreshold" label="Failure threshold" />
-              <Num name="failurePauseSeconds" label="Pause duration (seconds)" />
-              <Num name="auditRetentionDays" label="Audit retention (days)" />
+              <Num name="duplicateWindowSeconds" label="Check for duplicate messages sent in the last (seconds)" helper="Only recent messages to the same recipient are checked." />
+              <Num name="duplicateSimilarityThresholdPercent" label="Text similarity required to block a repeat (%)" helper="100% blocks exact repeats; lower values can also block similar text." />
+              <Num name="failurePauseThreshold" label="Consecutive failed sends before pausing" helper="A successful send breaks the consecutive-failure sequence." />
+              <Num name="failurePauseSeconds" label="How long to pause after repeated failures (seconds)" helper="The time to wait before resuming after the configured failure limit." />
+              <Num name="auditRetentionDays" label="Keep sending history for (days)" helper="Older sending audit records are removed during cleanup." />
             </Grid>
           </Group>
         </section>
@@ -298,9 +298,9 @@ function Group({ title, children }: { title: string; children: React.ReactNode }
 function Grid({ children }: { children: React.ReactNode }) {
   return <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">{children}</div>;
 }
-function Num({ name, label }: { name: string; label: string }) {
+function Num({ name, label, helper }: { name: string; label: string; helper?: string }) {
   return (
-    <FormInput name={name} label={label}>
+    <FormInput name={name} label={label} help={helper}>
       <Input type="number" />
     </FormInput>
   );
